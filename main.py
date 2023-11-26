@@ -1,18 +1,19 @@
-# import pytesseract 
-# from PIL import Image
-
-# img = Image.open("imagem_cupom.jpg")
-
-# text = pytesseract.image_to_string(img)
-
-# print (text)
-
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, current_user
 from bson import json_util
 from pymongo import MongoClient
 from bson import ObjectId
+from PIL import Image
+from io import BytesIO
+from werkzeug.utils import secure_filename
+import os
+import pytesseract
 import re
+
+pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png', 'gif', 'bmp'}
 
 app = Flask(__name__)
 app.secret_key = 'eloisa7453021264'
@@ -156,6 +157,53 @@ def get_despesas():
 
     # Converte os registros para um formato JSON e envia como resposta
     return jsonify(registros)
+
+
+@app.route('/processar_imagem', methods=['POST'])
+def processar_imagem():
+    try:
+        imagem_arquivo = request.files['imagem']
+
+        # Verificar se um arquivo de imagem foi enviado
+        if imagem_arquivo and allowed_file(imagem_arquivo.filename):
+            # Ler a imagem
+            imagem_pil = Image.open(imagem_arquivo)
+
+            # Extrair texto da imagem usando Tesseract OCR
+            texto_extraido = pytesseract.image_to_string(imagem_pil)
+
+           
+            print('Texto extraído da imagem:', texto_extraido)
+            
+            # Expressões regulares para extrair data, valor e forma de pagamento
+            padrao_data = re.compile(r'\b\d{2}/\d{2}/\d{4}\b')
+            padrao_valor = re.compile(r'R\$\s*(\d+\,\d{2})')
+            padrao_forma_pagamento = re.compile(r'(DINHEIRO|CARTAO|CHEQUE|PIX|DEBITO|CREDITO|TRANSFERENCIA)')
+
+            # Encontrar correspondências nos padrões
+            data_correspondencia = padrao_data.search(texto_extraido)
+            valor_correspondencia = padrao_valor.search(texto_extraido)
+            forma_pagamento_correspondencia = padrao_forma_pagamento.search(texto_extraido)
+
+            # Extrair os valores correspondentes
+            data = data_correspondencia.group() if data_correspondencia else None
+            valor = valor_correspondencia.group(1) if valor_correspondencia else None
+            forma_pagamento = forma_pagamento_correspondencia.group(1) if forma_pagamento_correspondencia else None
+
+            # Retornar as informações extraídas como JSON
+            return jsonify({
+                'data': data,
+                'valor': valor,
+                'forma_pagamento': forma_pagamento
+            })
+
+    except Exception as e:
+        print(f'Erro ao processar imagem: {str(e)}')
+
+        return jsonify({'error': f'Erro ao processar imagem: {str(e)}'}), 500
+
+    return jsonify({'error': 'Arquivo de imagem inválido'}), 400
+
         
 if __name__ == '__main__':
     app.run(debug=True)

@@ -14,10 +14,11 @@
         <h1>FinanceTech</h1>
     </header>
     <h3>Olá, <span id="user-email" data-email="{{ email_login }}">{{ email_login }}</span></h3>
-    <form id="despesaForm">
+    <form id="despesaForm" enctype="multipart/form-data">
         <div>
             <label for="tipoDespesa">Tipo de Despesa:</label>
             <select id="tipoDespesa" name="tipoDespesa">
+                <option value=""></option>
                 <option value="alimentacao">Alimentação</option>
                 <option value="combustivel">Combustível</option>
                 <option value="agua">Água</option>

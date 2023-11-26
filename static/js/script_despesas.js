@@ -6,11 +6,35 @@ function adicionarDespesa() {
     var formaPagamento = document.getElementById('formaPagamento').value;
     var observacoes = document.getElementById('observacoes').value;
     var imagem = document.getElementById('imagem').value;
+    var imagemInput = document.getElementById('imagem');
+    var imagemArquivo = imagemInput.files[0];
 
     // Validar se os campos obrigatórios foram preenchidos
     if (!tipoDespesa || !data || !valorTotal || !formaPagamento) {
         alert('Por favor, preencha todos os campos obrigatórios.');
         return;
+    }
+
+    // Verificar se uma imagem foi selecionada
+    if (imagemArquivo) {
+        // Criar um objeto FormData para enviar a imagem
+        var formData = new FormData();
+        formData.append('imagem', imagemArquivo);
+
+        // Enviar a imagem para o servidor usando fetch API
+        fetch('/processar_imagem', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Aqui você pode lidar com os dados processados do servidor
+            console.log('Texto extraído da imagem:', data.texto_extraido);
+            // Agora você pode processar data.texto_extraido para extrair informações específicas
+        })
+        .catch(error => {
+            console.error('Erro ao processar a imagem:', error);
+        });
     }
 
     // Adicionar uma nova linha à tabela
@@ -68,6 +92,64 @@ function adicionarDespesa() {
 
     alert('Despesa adicionada com sucesso!');
 }
+
+
+// Adiciona as informações extraídas ao formulário
+function preencherFormulario(data, valor, formaPagamento) {
+    // Função para converter o formato da data
+    function converterFormatoData(data) {
+        const partesData = data.split('/');
+        if (partesData.length === 3) {
+            return `${partesData[2]}-${partesData[1]}-${partesData[0]}`;
+        }
+        return data;
+    }
+
+    // Preencher os campos do formulário com os dados extraídos
+    document.getElementById('data').value = converterFormatoData(data) || '';
+    document.getElementById('valorTotal').value = valor || '';
+    
+    // Mapear a forma de pagamento extraída para o valor no seu formulário (ajuste conforme necessário)
+    const formaPagamentoMapping = {
+        'DINHEIRO': 'dinheiro',
+        'CARTAO': 'credito',
+        'CHEQUE': 'cheque',
+        'PIX': 'pix',
+        'DEBITO': 'debito',
+        'CREDITO': 'credito',
+        'TRANSFERENCIA': 'transferencia'
+    };
+
+    const formaPagamentoFormulario = formaPagamentoMapping[formaPagamento] || 'outro';
+    document.getElementById('formaPagamento').value = formaPagamentoFormulario;
+
+    adicionarDespesa();
+}
+
+
+// Função para processar a imagem e preencher o formulário
+function processarImagem() {
+    const imagemInput = document.getElementById('imagem');
+
+    // Criar um objeto FormData para enviar o arquivo de imagem
+    const formData = new FormData();
+    formData.append('imagem', imagemInput.files[0]);
+
+    // Fazer uma requisição AJAX para a rota /processar_imagem
+    fetch('/processar_imagem', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Chamar a função para adicionar as informações ao formulário
+        preencherFormulario(data.data, data.valor, data.forma_pagamento);
+    })
+    .catch(error => console.error('Erro ao processar imagem:', error));
+}
+
+// Adiciona um ouvinte de eventos para chamar a função processarImagem quando uma imagem é selecionada
+document.getElementById('imagem').addEventListener('change', processarImagem);
 
 // Função para atualizar a tabela com as despesas
 function atualizarTabela(emailUsuario) {
