@@ -1,0 +1,134 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1px;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+form div {
+    flex-basis: calc(50% - 10px);
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+select, input, textarea {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 97%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    border-radius: 8px; 
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: normal;
+}
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+#filtrosContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#filtros {
+    display: flex;
+    justify-content: space-between;
+    width: 97%;
+}
+
+.filtro {
+    flex-basis: calc(50% - 10px); 
+    box-sizing: border-box; 
+    margin-right: 20px; 
+}
+
+.filtro:last-child {
+    margin-right: 0;
+}
+
+.filtro label,
+.filtro input {
+    margin-bottom: 5px;
+    width: 100%;
+}
+#tabelaDespesas {
+    margin-top: 20px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    padding-right: 30px; 
+}
+
+.input-wrapper i {
+    position: absolute;
+    top: 50%;
+    right: 10px; 
+    transform: translateY(-50%);
+    cursor: pointer;
+}

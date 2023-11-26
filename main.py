@@ -9,6 +9,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, current_user
+from bson import json_util
 from pymongo import MongoClient
 from bson import ObjectId
 import re
@@ -29,9 +30,11 @@ def index():
 @app.route('/despesas', methods=['GET', 'POST'])
 @login_required
 def despesas():
+    user = current_user
+    registros = obter_registros_do_banco(user.email)
     if request.method == 'GET':
         email_login = request.args.get('email_login')
-        return render_template('despesas.html', email_login=email_login)
+        return render_template('despesas.html', email_login=user.email, registros=registros)
     elif request.method == 'POST':
         data = request.json
 
@@ -39,6 +42,16 @@ def despesas():
         despesas = db.registros
         despesas.insert_one(data)
         return jsonify({'message': 'Despesa adicionada com sucesso!'})
+    
+
+def obter_registros_do_banco(email_usuario):
+    registros = db.registros.find({'email': email_usuario})
+    # Converta os resultados do cursor MongoDB para uma lista Python
+    registros_list = list(registros)
+    registros_json = json_util.dumps(registros_list)
+    
+    return registros_json
+
 
 @app.route('/cadastro')
 def cadastro():
@@ -130,6 +143,19 @@ def adicionar_despesa():
     despesas.insert_one(data)
 
     return jsonify({'message': 'Despesa adicionada com sucesso!'})
+
+
+@app.route('/get_despesas', methods=['GET'])
+@login_required
+def get_despesas():
+    # Obtém o usuário atualmente logado
+    user = current_user
+
+    # Adicione o código para obter os registros relacionados ao usuário do banco de dados
+    registros = obter_registros_do_banco(user.email)
+
+    # Converte os registros para um formato JSON e envia como resposta
+    return jsonify(registros)
         
 if __name__ == '__main__':
     app.run(debug=True)

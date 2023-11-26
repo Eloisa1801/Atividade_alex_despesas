@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/css_login_cadastro.css"/>
+    <title>Document</title>
+</head>
+<body>
+   
+    <form action="{{ url_for('login') }}" method="post">
+        <h1>Login</h1>
+         <!-- mensagens de erro ou sucesso -->
+         {% if error %}
+            <p class="message error">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p class="message success">{{ success }}</p>
+        {% endif %}
+        <div>
+            <label for="email">Email:</label>
+            <input type="text" id="email_login" name="email_login">
+            <span id="user-email" data-email="{{ email_login }}">{{ email_login }}</span>
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha_login" name="senha_login">
+            <button type="submit">Acessar</button>
+        </div>
+        <h4><a href="{{ url_for('cadastro') }}">Cadastre-se</a></h4>
+    </form>
+</body>
+</html>

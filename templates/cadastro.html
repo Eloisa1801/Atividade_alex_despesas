@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/css_login_cadastro.css"/>
+    <title>Document</title>
+</head>
+<body>
+    <form action="/cadastro" method="post">
+        <h1>Cadastro</h1>
+        <!-- mensagens de erro ou sucesso -->
+        {% if error %}
+            <p class="message error">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+            <p class="message success">{{ success }}</p>
+        {% endif %}
+        <div>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome_usuario" name="nome_usuario">
+            <label for="email">Email:</label>
+            <input type="text" id="email_usuario" name="email_usuario">
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha_usuario" name="senha_usuario">
+        </div>
+        <button type="submit">Cadastrar</button>
+    </form>
+</body>
+</html>
